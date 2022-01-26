@@ -3,8 +3,34 @@ Experiences dealing with rhf2s308 for helium mining.
 
 I am documenting this for my own use (when inevitably I need to flash the firmware and start over).  I would not recommend anyone execute these commands unless you know what you are doing. I will take no responsibility if you mess up your miner. 
 
+# Obtaining shell access
 
-# Using Wifi for Internet
+It seems that RisingHF has begun to lock us out of the devices.  The credentials in the manual (https://risinghf-official-website.oss-cn-shenzhen.aliyuncs.com/static/file/product/GX5CI5KeGI7Dl7fFvTrLrA==.pdf) are stated as username/password: `rxhf`/`risinghf`.  These work for a few moments after a firmware flash, but suddenly change moments later. A solution is to quickly create your own username and password, and give yourself sudo access.
+
+1) Flash firmware.  Power cycle.
+2) Immediately log in with rxhf/risinghf username/pw combo (via serial (i.e. USB)).
+3) `sudo adduser username`
+4) `sudo adduser username sudo #give myself sudo access`
+
+(Aside: several moments later, if you try to log in with `rxhf/risinghf` you likely will not be able to.  If you don't want a user account with mystery credentials on *your own hardware*, then you can change the password with `sudo pw rxhf` since you now have your own account with root access).
+
+## Turn on `ssh` access
+
+Run `sudo openssh`. I have found this to be inconsistent.  You might also consider unmasking and enableing the ssh service:
+
+``` bash
+systemctl unmask ssh
+systemctl enable ssh
+systemctl start ssh
+```
+
+
+# Accessing the web dashboard
+
+``` sudo openweb``` will start the web server and give access on port 80 to the dashboard discussed in the manual. The information is generic, and mostly irrelevant to Helium mining.
+
+
+# Enabling Wifi for Internet
 
 The stock box only uses wifi for diagnostics/debugging/admin.  Thus it creates an access point. If you attempt to connect to Wifi using the Helium app, you might get lucky and do so before this service has created the access point, making it seem like it's working, but the hotspot wifi will not be consistent as the access point services will be constantly battling for access to the wlan0 network interface.  Here I attempt to disable this access point so that I can use the Wifi interface as an internet connection. 
 
