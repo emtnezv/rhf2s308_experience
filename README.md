@@ -7,10 +7,13 @@ I am documenting this for my own use (when inevitably I need to flash the firmwa
 
 It seems that RisingHF has begun to lock us out of the devices.  The credentials in the manual (https://risinghf-official-website.oss-cn-shenzhen.aliyuncs.com/static/file/product/GX5CI5KeGI7Dl7fFvTrLrA==.pdf) are stated as username/password: `rxhf`/`risinghf`.  These work for a few moments after a firmware flash, but suddenly change moments later. A solution is to quickly create your own username and password, and give yourself sudo access.
 
-1) Flash firmware.  Power cycle.
-2) Immediately log in with rxhf/risinghf username/pw combo (via serial (i.e. USB)).
-3) `sudo adduser username`
-4) `sudo adduser username sudo #give myself sudo access`
+1) Flash firmware.
+2) Unplug USB.
+3) Disconnect power.
+4) Reconnect power.
+6) Immediately start to attempt to log in with rxhf/risinghf username/pw combo (via serial (i.e. USB). Use PuTTY on Windows. Refer to the manual above for this as it's accurate this far).
+8) As soon as you're logged in, create a new user (username is your choice): `sudo adduser username`
+9) Then give your new account sudo access: `sudo adduser username sudo`
 
 (Aside: several moments later, if you try to log in with `rxhf/risinghf` you likely will not be able to.  If you don't want a user account with mystery credentials on *your own hardware*, then you can change the password with `sudo pw rxhf` since you now have your own account with root access).
 
