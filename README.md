@@ -1,7 +1,7 @@
 # rhf2s308_experiences
 Experiences dealing with rhf2s308 for helium mining. 
 
-I am documenting this for my own use (when inevitably I need to flash the firmware and start over).  I would not recommend anyone execute these commands unless you know what you are doing. I will take no responsibility if you mess up your miner. 
+I am documenting this for my own use (when inevitably I need to flash the firmware and start over).  I would not recommend anyone execute these commands unless you know what you are doing. I take no responsibility if you mess up your miner.
 
 # Obtaining shell access
 
@@ -11,7 +11,7 @@ It seems that RisingHF has begun to lock us out of the devices.  The credentials
 2) Unplug USB.
 3) Disconnect power.
 4) Reconnect power.
-6) Immediately start to attempt to log in with rxhf/risinghf username/pw combo (via serial (i.e. USB). Use PuTTY on Windows. Refer to the manual above for this as it's accurate this far).
+6) Immediately start attempting to log in with `rxhf`/`risinghf` username/password combo (via serial (i.e. USB). Use PuTTY on Windows. Refer to the manual above for this as it's accurate this far). Remember that this is Linux so the password field will not show placeholders as you type.
 8) As soon as you're logged in, create a new user (username is your choice): `sudo adduser username`
 9) Then give your new account sudo access: `sudo adduser username sudo`
 
