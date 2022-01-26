@@ -1,11 +1,12 @@
 # rhf2s308_experience
 Experiences dealing with rhf2s308 for helium mining. 
 
-I am documenting this for my own use (when inevitably I need to flash the firmware).  I would not recommend you execute these commands unless you know what you are doing. I am intentionally 
+I am documenting this for my own use (when inevitably I need to flash the firmware and start over).  I would not recommend anyone execute these commands unless you know what you are doing. I will take no responsibility if you mess up your miner. 
 
 
-# Using Wifi instead of Ethernet
-The stock box only uses wifi for diagnostics/debugging/admin.  Thus it creates an access point. If you attempt to connect to Wifi using the Helium app, you might get lucky and do so before this service has created the access point, making it seem like it's working, but the hotspot wifi will not be consistent as the access point services will be constantly battling for access to the network interface.  Here I attempt to disable this access point so that I can use the Wifi interface as a network connection. 
+# Using Wifi for Internet
+
+The stock box only uses wifi for diagnostics/debugging/admin.  Thus it creates an access point. If you attempt to connect to Wifi using the Helium app, you might get lucky and do so before this service has created the access point, making it seem like it's working, but the hotspot wifi will not be consistent as the access point services will be constantly battling for access to the wlan0 network interface.  Here I attempt to disable this access point so that I can use the Wifi interface as an internet connection. 
 
 First, we must disable the two services that initialize the access point:
 ``` bash
@@ -26,7 +27,7 @@ root       536  0.0  0.1  12564  1704 ?        Ss   14:11   0:00 /sbin/wpa_suppl
 root       795  0.0  0.0  12712   836 ?        Ss   14:11   0:00 wpa_supplicant -B -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0 -Dnl80211,wext
 ```
 
-The first one is launched by systemd (you can verify by comparing this command to the `ExecStart` entry in `/usr/lib/systemd/system/wpa_supplicant.service`) and the second is launched by dhcpcd via `/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant`.  It sounds like this is an issue with Raspberry Pis (https://forums.raspberrypi.com/viewtopic.php?t=292401) and it is safe to disable the systemd service, as dhcpcd will take care of launching wpa_supplicant. In fact, if you look at the systemd service status (`systemctl status wpa_supplicant`), you might even see that it's full of complaints that the driver is already in use ("nl80211: kernel reports: Match already configured").  So we stop, disable, and mask it as well.
+The first one is launched by systemd (you can verify by comparing this command to the `ExecStart` entry in `/usr/lib/systemd/system/wpa_supplicant.service`) and the second is launched by dhcpcd via `/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant`.  It sounds like this is an issue with Raspberry Pis in general (https://forums.raspberrypi.com/viewtopic.php?t=292401) and it is safe to disable the systemd service, as dhcpcd will take care of launching wpa_supplicant. In fact, if you look at the systemd service status (`systemctl status wpa_supplicant`), you might even see that it's full of complaints that the driver is already in use ("nl80211: kernel reports: Match already configured").  So we stop it and mask it as well:
 
 ``` bash 
 systemctl stop wpa_supplicant
@@ -34,7 +35,7 @@ systemctl disable wpa_supplicant
 systemctl mask wpa_supplicant
 ```
 
-Now, all that's left to do is add our network credentials to the wpa_supplicant configuration file.  modify `/etc/wpa_supplicant/wpa_supplicant.conf` to look like the following: (the first two lines should already be present). 
+Now, all that's left to do is add our network credentials to the wpa_supplicant configuration file.  Modify `/etc/wpa_supplicant/wpa_supplicant.conf` to look like the following: (the first two lines should already be present; obviously put your own network's credentials. Use `key_mgmt=NONE` for unsecured Wifi (untested)). 
 ```
 ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
 update_config=1
