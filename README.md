@@ -16,7 +16,7 @@ systemctl disable create_ap
 systemctl mask create_ap
 ```
 
-The networking on this device is managed by `connman`, but if you try to connect to wifi using `connmanclt` right now, you will get a `No Carrier` error. This is because (for some reason) there are two instances of the `wpa_supplicant` service:
+The networking on this device is managed by `connman`, but if you try to connect to wifi using `connmanclt` right now, you will get a `No Carrier` error. This is because (for some reason) there are two instances of the `wpa_supplicant` service started. 
 
 ``` bash 
 root@rhf2s308:# ps -aux | grep wpa_supplicant
@@ -24,6 +24,13 @@ root       536  0.0  0.1  12564  1704 ?        Ss   14:11   0:00 /sbin/wpa_suppl
 root       795  0.0  0.0  12712   836 ?        Ss   14:11   0:00 wpa_supplicant -B -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0 -Dnl80211,wext
 ```
 
-The first one is launched by `systemd` and is good.  The second one is rogue.  Let's hunt down its parent.
+The first one is launched by systemd (you can verify by comparing this command to the `ExecStart` entry in `/usr/lib/systemd/system/wpa_supplicant.service`) and the second is launched by dhcpcd via `/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant`.  It sounds like this is an issue with Raspberry Pis (https://forums.raspberrypi.com/viewtopic.php?t=292401) and it is safe to disable the systemd service, as dhcpcd will take care of launching wpa_supplicant.  So we disable and mask it as well:
+
+``` bash 
+systemctl stop wpa_supplicant
+systemctl disable wpa_supplicant
+systemctl mask wpa_supplicant
+```
+
 
 
