@@ -1,8 +1,10 @@
 # rhf2s308_experience
-Experiences dealing with rhf2s308 for helium mining
+Experiences dealing with rhf2s308 for helium mining. 
+
+I am documenting this for my own use (when inevitably I need to flash the firmware).  I would not recommend you execute these commands unless you know what you are doing. I am intentionally 
 
 
-# Connecting to Wifi
+# Using Wifi instead of Ethernet
 The stock box only uses wifi for diagnostics/debugging/admin.  Thus it creates an access point. If you attempt to connect to Wifi using the Helium app, you might get lucky and do so before this service has created the access point, making it seem like it's working, but the hotspot wifi will not be consistent as the access point services will be constantly battling for access to the network interface.  Here I attempt to disable this access point so that I can use the Wifi interface as a network connection. 
 
 First, we must disable the two services that initialize the access point:
@@ -72,3 +74,5 @@ root@rhf2s308:~# docker exec miner cat /var/data/log/console.log | grep --text w
 ```
 
 (i.e. it heard a witness, then ~30 seconds later was successful in dialing the challenger)
+
+`HNT: 14LxUtbb6SgpYMxXJESSzKsppPqThoJHh7dFXKZmyCni1N5spKZ`
