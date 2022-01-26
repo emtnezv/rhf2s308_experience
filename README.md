@@ -42,5 +42,33 @@ network={
  	psk="My-Password"
 }
 ```
+After doing all this and rebooting, I was automatically connected to wifi when the system came back up:
 
+``` bash 
+username@rhf2s308:~ $ ifconfig
+...
+wlan0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.0.163  netmask 255.255.255.0  broadcast 192.168.0.255
+        inet6 fe80::84b9:6e67:6246:417e  prefixlen 64  scopeid 0x20<link>
+        ether 20:50:e7:10:9d:4b  txqueuelen 1000  (Ethernet)
+        RX packets 2600  bytes 2244628 (2.1 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 2220  bytes 467805 (456.8 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+...
 
+```
+
+My concern was that the Helium miner would have the `eth0` interface hard coded and would not pick up on `wlan0` being connected, but after pulling the ethernet plug, the `peer_book` went relayed as expected (`docker exec miner miner peer book -s`) as I do not have port forwarding set up for the Wifi IP.  Since reboot, I have successfully heard and submitted (over wifi) a witness, so it seems to be working:
+
+```bash
+root@rhf2s308:~# docker exec miner cat /var/data/log/console.log | grep --text witness
+
+2022-01-26 15:54:17.375 8 [info] <0.1642.0>@miner_onion_server:decrypt:{372,13} could not decrypt packet received via radio: treating as a witness
+2022-01-26 15:54:17.377 8 [info] <0.3142.0>@miner_onion_server:send_witness:{188,13} sending witness at RSSI: -99, Frequency: 904.7, SNR: -2.75
+2022-01-26 15:54:17.573 8 [warning] <0.3142.0>@miner_onion_server:send_witness:{243,37} failed to dial challenger "/p2p/redacted": not_found
+2022-01-26 15:54:47.592 8 [info] <0.3142.0>@miner_onion_server:send_witness:{246,37} re-sending witness at RSSI: -99, Frequency: 904.7, SNR: -2.75
+2022-01-26 15:54:49.193 8 [info] <0.3142.0>@miner_onion_server:send_witness:{251,37} successfully sent witness to challenger "/p2p/redacted" with RSSI: -99, Frequency: 904.7, SNR: -2.75
+```
+
+(i.e. it heard a witness, then ~30 seconds later was successful in dialing the challenger)
