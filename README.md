@@ -16,7 +16,7 @@ systemctl disable create_ap
 systemctl mask create_ap
 ```
 
-The networking on this device is managed by `connman`, but if you try to connect to wifi using `connmanclt` right now, you will get a `No Carrier` error. This is because (for some reason) there are two instances of the `wpa_supplicant` service started. 
+The networking on this device is managed by `connman`, but if you try to connect to wifi using `connmanctl` right now, you will get a `No Carrier` error. This is because (for some reason) there are two instances of the `wpa_supplicant` service started. 
 
 ``` bash 
 root@rhf2s308:# ps -aux | grep wpa_supplicant
