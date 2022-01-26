@@ -10,5 +10,7 @@
 # 2022-01-26 17:03:38.994 Successfully sent 
 # 2022-01-26 17:03:43.682 Max retry
 
-sudo docker exec miner tail -f /var/data/log/console.log | awk '{if ($6=="successfully") print "\x1b[32m"$1" "$2" Successfully sent \x1b[0m"; else if ($13=="treating") print $1" "$2" Heard witness"; else if ($10=="max") print "\x1b[31m"$1" "$2" Max retry\x1b[0m"; }'
-
+#process everything in the log as of now:
+sudo docker exec miner cat     /var/data/log/console.log | grep --text witness |  awk '{if ($6=="successfully") print "\x1b[32m"$1" "$2" Successfully sent \x1b[0m"; else if ($13=="treating") print $1" "$2" Heard witness"; else if ($10=="max") print "\x1b[31m"$1" "$2" Max retry\x1b[0m"; }'
+#tail the log
+sudo docker exec miner tail -f /var/data/log/console.log | grep --text witness |  awk '{if ($6=="successfully") print "\x1b[32m"$1" "$2" Successfully sent \x1b[0m"; else if ($13=="treating") print $1" "$2" Heard witness"; else if ($10=="max") print "\x1b[31m"$1" "$2" Max retry\x1b[0m"; }'
