@@ -1,4 +1,4 @@
-# rhf2s308_experience
+# rhf2s308_experiences
 Experiences dealing with rhf2s308 for helium mining. 
 
 I am documenting this for my own use (when inevitably I need to flash the firmware and start over).  I would not recommend anyone execute these commands unless you know what you are doing. I will take no responsibility if you mess up your miner. 
