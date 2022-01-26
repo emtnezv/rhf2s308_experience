@@ -24,7 +24,7 @@ root       536  0.0  0.1  12564  1704 ?        Ss   14:11   0:00 /sbin/wpa_suppl
 root       795  0.0  0.0  12712   836 ?        Ss   14:11   0:00 wpa_supplicant -B -c/etc/wpa_supplicant/wpa_supplicant.conf -iwlan0 -Dnl80211,wext
 ```
 
-The first one is launched by systemd (you can verify by comparing this command to the `ExecStart` entry in `/usr/lib/systemd/system/wpa_supplicant.service`) and the second is launched by dhcpcd via `/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant`.  It sounds like this is an issue with Raspberry Pis (https://forums.raspberrypi.com/viewtopic.php?t=292401) and it is safe to disable the systemd service, as dhcpcd will take care of launching wpa_supplicant.  So we disable and mask it as well:
+The first one is launched by systemd (you can verify by comparing this command to the `ExecStart` entry in `/usr/lib/systemd/system/wpa_supplicant.service`) and the second is launched by dhcpcd via `/lib/dhcpcd/dhcpcd-hooks/10-wpa_supplicant`.  It sounds like this is an issue with Raspberry Pis (https://forums.raspberrypi.com/viewtopic.php?t=292401) and it is safe to disable the systemd service, as dhcpcd will take care of launching wpa_supplicant. In fact, if you look at the systemd service status (`systemctl status wpa_supplicant`), you might even see that it's full of complaints that the driver is already in use ("nl80211: kernel reports: Match already configured").  So we stop, disable, and mask it as well.
 
 ``` bash 
 systemctl stop wpa_supplicant
@@ -32,5 +32,15 @@ systemctl disable wpa_supplicant
 systemctl mask wpa_supplicant
 ```
 
+Now, all that's left to do is add our network credentials to the wpa_supplicant configuration file.  modify `/etc/wpa_supplicant/wpa_supplicant.conf` to look like the following: (the first two lines should already be present). 
+```
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+
+network={
+	ssid="MY-WIFI-NETWORK-NAME"
+ 	psk="My-Password"
+}
+```
 
 
