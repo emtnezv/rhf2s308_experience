@@ -19,13 +19,11 @@ It seems that RisingHF has begun to lock us out of the devices.  The credentials
 
 ## Turn on `ssh` access
 
-Run `sudo openssh`. I have found this to be inconsistent.  You might also consider unmasking and enableing the ssh service:
-
-``` bash
-systemctl unmask ssh
-systemctl enable ssh
-systemctl start ssh
+Run `sudo openssh`.  It seems that the ssh service gets periodically masked again. I add
 ```
+./usr/local/sbin/openssh & 
+```
+to my `/etc/rc.local` file to unmask on boot, or to crontab to run periodically.
 
 
 # Accessing the web dashboard
