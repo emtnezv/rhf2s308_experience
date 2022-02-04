@@ -105,4 +105,28 @@ root@rhf2s308:~# docker exec miner cat /var/data/log/console.log | grep --text w
 
 (i.e. it heard a witness, then ~30 seconds later was successful in dialing the challenger)
 
+
+## Frozen sync
+On Wednesday, Feb 2, my miner started to fall behind the blockchain and the logs were full of messages along the lines of `no plausible blocks in batch`. I do not have a fix for this; I do not know why it happened, but I have a workaround. It amounts to installing the miner on another computer, letting it sync, then copying over the entire blockchain directory. This worked for me, and my miner is back witnessing and earning rewards.  I will note that if you don't have some basic knowledge of Unix, this is probably not going to be possible for you to undertake, as it's not a straight copy/paste of my commands.
+
+You need another computer (not sure requirements, but I used a Ubuntu server I have at home).  Using this other computer (I'll call it "B"):
+1) Install the Helium miner: https://github.com/helium/devdocs/blob/master/blockchain/run-your-own-miner.md.
+2) Start the miner and let it sync.  It will download a snapshot and sync. Mine took about 4 hours, but it's a pretty powerful computer. It was much faster than the low-powered hotspot. Keep an eye on the logs and move to 3) once it's caught up.
+3) Once it's caught up, stop the miner. On B, run: `sudo docker stop miner`.
+4) Stop the miner on the RisingHF hotspot: `sudo docker stop miner`.
+5) Remove the miner data directory: On the hotspot: `sudo rm -r /opt/helium/miner_data`
+6) Copy over the contents of `miner_data` folder from Computer B to hotspot. This exact command depends on where you chose to locally store the miner data. In the link in step (1) above, they chose `~/miner_data`. I used rsync to copy over the network. I ran the following command _from the hotspot_ as root is needed to write to `/opt/helium`. On the hotspot: 
+```bash 
+# user = username on Computer B 
+# 192.168.0.333 = Local IP Address of Computer B (yours will be different)
+
+rsync -av --info=progress2 user@192.168.0.333:/home/user/miner_data/ /opt/helium/miner_data
+```
+7) Start the miner on the hotspot: ```sudo docker start miner```
+8) The hot spot should now only be several minutes behind (however long the copy operation took). 
+
+
+
+
+
 `HNT: 14LxUtbb6SgpYMxXJESSzKsppPqThoJHh7dFXKZmyCni1N5spKZ`
